@@ -1,15 +1,13 @@
-// src/three/Skateboard.tsx
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
-
 import Deck from "./Deck";
 import Trucks from "./Trucks";
 import Wheels from "./Wheels";
 import CalloutBox from "./CalloutBox";
 
 type Part = "deck" | "trucks" | "wheels" | null;
-type DeckGraphic = "flame" | "minimal" | "galaxy";
+type DeckGraphic = "blind" | "girl" | "supreme";
 type WheelType = "classic" | "conical" | "wide";
 type TruckColor = "raw" | "black" | "gold";
 
@@ -27,8 +25,6 @@ export default function Skateboard({
   truckColor: TruckColor;
 }) {
   const boardRef = useRef<THREE.Group | null>(null);
-
-  // 🔹 nieuwe basispose – goed voor desktop & tablet
   const basePos = { x: 0, y: -0.035, z: 0 };
   const baseRot = { x: 0.18, y: 0, z: 0 };
   const baseScale = 1.2;
@@ -36,7 +32,6 @@ export default function Skateboard({
   useEffect(() => {
     if (!boardRef.current) return;
 
-    // eerst alle oude tweens killen
     gsap.killTweensOf([
       boardRef.current.position,
       boardRef.current.rotation,
@@ -49,7 +44,6 @@ export default function Skateboard({
       scale: baseScale,
     };
 
-    // 🔹 target per onderdeel (nieuw afgesteld)
     let target = base;
 
     if (selectedPart === "deck") {
@@ -75,7 +69,6 @@ export default function Skateboard({
     const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
 
     if (selectedPart == null) {
-      // terug naar basis
       tl.to(boardRef.current.position, {
         x: base.pos.x,
         y: base.pos.y,
@@ -98,7 +91,6 @@ export default function Skateboard({
           "<"
         );
     } else {
-      // eerst kort naar basis, dan cinematic naar target
       tl.to(boardRef.current.position, {
         x: base.pos.x,
         y: base.pos.y,
@@ -164,28 +156,30 @@ export default function Skateboard({
       rotation={[baseRot.x, baseRot.y, baseRot.z]}
       scale={baseScale}
     >
-      <Deck />
-      <Trucks /* later: truckColor */ />
-      <Wheels /* later: wheelType */ />
+      <Deck selectedGraphic={deckGraphic} />
+      <Trucks truckColor={truckColor} />
+      <Wheels wheelType={wheelType} />
 
-      {/* Callouts */}
       <CalloutBox
         anchor={[0, 0.02, 0]}
-        offset={[0.4, 0.2, 0]}
+        offset={[0.2, 0.2, 0]}
         active={selectedPart === "deck"}
         onClick={() => setSelectedPart("deck")}
+        icon="/images/deck-icon.png"
       />
       <CalloutBox
         anchor={[0.2, -0.04, 0]}
-        offset={[0.4, 0.0, 0]}
+        offset={[0.3, 0.1, 0]}
         active={selectedPart === "trucks"}
         onClick={() => setSelectedPart("trucks")}
+        icon="/images/truck-icon.png"
       />
       <CalloutBox
-        anchor={[0.205, -0.046, 0.085]}
-        offset={[0.4, -0.1, 0]}
+        anchor={[0.22, -0.046, 0.11]}
+        offset={[0.25, -0.1, 0]}
         active={selectedPart === "wheels"}
         onClick={() => setSelectedPart("wheels")}
+        icon="/images/wheel-icon.png"
       />
     </group>
   );

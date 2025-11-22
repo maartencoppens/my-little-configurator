@@ -2,9 +2,40 @@ import CTA from "../components/CTA";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
-import { OrbitControls } from "@react-three/drei";
+import { Suspense, useEffect, useRef } from "react";
+import gsap from "gsap";
 import Deck from "../three/Deck";
+
+const AnimatedDeck = () => {
+  const groupRef = useRef<any>(null);
+
+  useEffect(() => {
+    const g = groupRef.current;
+    if (!g) return;
+
+    gsap.fromTo(
+      g.position,
+      { y: -6 },
+      { y: 0, duration: 1.2, ease: "power3.out" }
+    );
+
+    gsap.fromTo(
+      g.rotation,
+      { y: 0 },
+      { y: Math.PI * 2, duration: 1.2, ease: "power3.out" }
+    );
+  }, []);
+
+  return (
+    <group ref={groupRef}>
+      <Deck
+        position={[0, -1, 0]}
+        rotation={[Math.PI / 2, Math.PI / 2, 0]}
+        scale={4}
+      />
+    </group>
+  );
+};
 
 const Homepage = () => {
   return (
@@ -26,10 +57,9 @@ const Homepage = () => {
             camera={{ position: [0, 0, 2], fov: 50 }}
           >
             <Suspense fallback={null}>
-              <OrbitControls enablePan={false} />
               <ambientLight intensity={0.8} />
               <directionalLight position={[5, 5, 5]} intensity={1} />
-              <Deck />
+              <AnimatedDeck />
             </Suspense>
           </Canvas>
         </div>
